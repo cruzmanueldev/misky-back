@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model calification {
+  id         Int      @id @default(autoincrement())
+  sale_id    Int
+  user_id    Int
+  comment    String?
+  rating     Int
+  created_at DateTime @default(now())
+  updated_at DateTime
+  sale       sale     @relation(fields: [sale_id], references: [id], map: "Calification_sale_id_fkey")
+  user       user     @relation(fields: [user_id], references: [id], map: "Calification_user_id_fkey")
+
+  @@index([sale_id], map: "Calification_sale_id_fkey")
+  @@index([user_id], map: "Calification_user_id_fkey")
+}
+
+model category {
+  id         Int       @id @default(autoincrement())
+  name       String
+  order      Int?
+  created_at DateTime  @default(now())
+  updated_at DateTime
+  product    product[]
+}
+
+model comment {
+  id         Int      @id @default(autoincrement())
+  name       String
+  lastname   String
+  email      String
+  created_at DateTime @default(now())
+  updated_at DateTime
+  user_id    Int?
+  message    String?  @db.Text
+  user       user?    @relation(fields: [user_id], references: [id], map: "Comment_user_id_fkey")
+
+  @@index([user_id], map: "Comment_user_id_fkey")
+}
+
+model detailpack {
+  id         Int      @id @default(autoincrement())
+  product_id Int
+  name       String
+  order      Int?
+  created_at DateTime @default(now())
+  updated_at DateTime
+  product    product  @relation(fields: [product_id], references: [id], map: "DetailPack_product_id_fkey")
+
+  @@index([product_id], map: "DetailPack_product_id_fkey")
+}
+
+model discount {
+  id         Int      @id @default(autoincrement())
+  product_id Int
+  name       String
+  amount     Decimal  @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime
+  product    product  @relation(fields: [product_id], references: [id], map: "Discount_product_id_fkey")
+  sale       sale[]
+
+  @@index([product_id], map: "Discount_product_id_fkey")
+}
+
+model product {
+  id          Int          @id @default(autoincrement())
+  name        String
+  price       Decimal      @db.Decimal(10, 2)
+  image       String?      @db.VarChar(255)
+  description String?
+  order       Int?
+  units       Int?
+  created_at  DateTime     @default(now())
+  updated_at  DateTime
+  category_id Int?
+  detailpack  detailpack[]
+  discount    discount[]
+  category    category?    @relation(fields: [category_id], references: [id], map: "Product_category_id_fkey")
+
+  @@index([category_id], map: "Product_category_id_fkey")
+  detail_sale detail_sale[]
+}
+
+model sale {
+  id           Int            @id @default(autoincrement())
+  user_id      Int?
+  discount_id  Int?
+  amount       Decimal        @db.Decimal(10, 2)
+  amount_final Decimal        @db.Decimal(10, 2)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime
+  calification calification[]
+  discount     discount?      @relation(fields: [discount_id], references: [id], map: "Sale_discount_id_fkey")
+  user         user?          @relation(fields: [user_id], references: [id], map: "Sale_user_id_fkey")
+  statesale    statesale[]
+
+  @@index([discount_id], map: "Sale_discount_id_fkey")
+  @@index([user_id], map: "Sale_user_id_fkey")
+  detail_sale detail_sale[]
+}
+
+model state {
+  id         Int         @id @default(autoincrement())
+  name       String
+  created_at DateTime    @default(now())
+  updated_at DateTime
+  statesale  statesale[]
+}
+
+model statesale {
+  id         Int      @id @default(autoincrement())
+  state_id   Int
+  status     String?
+  sale_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime
+  sale       sale     @relation(fields: [sale_id], references: [id], map: "StateSale_sale_id_fkey")
+  state      state    @relation(fields: [state_id], references: [id], map: "StateSale_state_id_fkey")
+
+  @@index([sale_id], map: "StateSale_sale_id_fkey")
+  @@index([state_id], map: "StateSale_state_id_fkey")
+}
+
+model user {
+  id           Int            @id @default(autoincrement())
+  email        String?        @unique(map: "User_email_key")
+  name         String
+  created_at   DateTime       @default(now())
+  lastname     String?
+  phone        String?
+  updated_at   DateTime?
+  calification calification[]
+  comment      comment[]
+  sale         sale[]
+}
+
+model detail_sale {
+  id            Int      @id @default(autoincrement())
+  sale_id       Int
+  product_id    Int
+  selling_price Decimal  @db.Decimal(10,2)
+  quantity      Int      @default(1)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  sale    sale    @relation(fields: [sale_id], references: [id])
+  product product @relation(fields: [product_id], references: [id])
+}
