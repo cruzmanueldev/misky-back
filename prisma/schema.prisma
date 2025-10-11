@@ -71,22 +71,27 @@ model discount {
 }
 
 model product {
-  id          Int          @id @default(autoincrement())
-  name        String
-  price       Decimal      @db.Decimal(10, 2)
-  image       String?      @db.VarChar(255)
-  description String?
-  order       Int?
-  units       Int?
-  created_at  DateTime     @default(now())
-  updated_at  DateTime
-  category_id Int?
-  detailpack  detailpack[]
-  discount    discount[]
-  category    category?    @relation(fields: [category_id], references: [id], map: "Product_category_id_fkey")
+  id                    Int           @id @default(autoincrement())
+  name                  String
+  price                 Decimal       @db.Decimal(10, 2)
+  image                 String?       @db.VarChar(255)
+  detail                String?       @db.VarChar(255)
+  description           String?
+  description_carrousel String?       @db.Text
+  order                 Int?
+  units                 Int?
+  show_in_carrousel     Boolean       @default(false)
+  best_seller           Boolean       @default(false)
+  active_promotion      Boolean       @default(false)
+  created_at            DateTime      @default(now())
+  updated_at            DateTime
+  category_id           Int?
+  detailpack            detailpack[]
+  discount              discount[]
+  category              category?     @relation(fields: [category_id], references: [id], map: "Product_category_id_fkey")
+  detail_sale           detail_sale[]
 
   @@index([category_id], map: "Product_category_id_fkey")
-  detail_sale detail_sale[]
 }
 
 model sale {
@@ -101,10 +106,10 @@ model sale {
   discount     discount?      @relation(fields: [discount_id], references: [id], map: "Sale_discount_id_fkey")
   user         user?          @relation(fields: [user_id], references: [id], map: "Sale_user_id_fkey")
   statesale    statesale[]
+  detail_sale  detail_sale[]
 
   @@index([discount_id], map: "Sale_discount_id_fkey")
   @@index([user_id], map: "Sale_user_id_fkey")
-  detail_sale detail_sale[]
 }
 
 model state {
@@ -146,7 +151,7 @@ model detail_sale {
   id            Int      @id @default(autoincrement())
   sale_id       Int
   product_id    Int
-  selling_price Decimal  @db.Decimal(10,2)
+  selling_price Decimal  @db.Decimal(10, 2)
   quantity      Int      @default(1)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
