@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: ["*"],
+    origin: ["https://miskyreposteria.es/"],
     // origin: ["http://localhost:3001"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: false,
