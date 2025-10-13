@@ -81,7 +81,7 @@ export class SalesService {
     message += `\nTotal: ${amount_final}€`;
     console.log(message);
 
-    // await this.twilioService.sendWhatsAppMessage(message);
+    await this.twilioService.sendWhatsAppMessage(message);
 
     return {
       status: 200,
