@@ -6,9 +6,9 @@ export class TwilioController {
 
   constructor(private readonly twilioService: TwilioService) {}
 
-  @Get('send')
-  async sendMessage(@Query('msg') msg: string) {
-    const to = process.env.MY_PHONE_NUMBER!;
-    return this.twilioService.sendWhatsAppMessage(msg || 'Nuevo pedido');
-  }
+  // @Get('send')
+  // async sendMessage(@Query('msg') msg: string) {
+  //   const to = process.env.MY_PHONE_NUMBER!;
+  //   return this.twilioService.sendWhatsAppMessage(msg || 'Nuevo pedido');
+  // }
 }

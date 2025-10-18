@@ -145,6 +145,8 @@ export class ProductsService {
     const detail = await this.prisma.detailpack.createMany({
       data : detail_product
     })
+
+    return 'Lista de producto actualizada';
   }
 
   async updateTopProducts(ids: number[]) {
@@ -256,7 +258,7 @@ export class ProductsService {
       data: {
         name,
         price: Number(price),
-        image,
+        image: '/uploads/products/'+image,
         detail,
         description,
         units: Number(units),
@@ -279,11 +281,11 @@ export class ProductsService {
       name: data.name ?? existing.name,
       price: data.price ? Number(data.price) : existing.price,
       description: data.description ?? existing.description,
-      order: data.order ?? existing.order,
       detail: data.detail ?? existing.detail,
-      units: data.units ?? existing.units,
-      category_id: data.category_id ? Number(data.category_id) : existing.category_id,
       description_carrousel: data.description_carrousel ?? existing.description_carrousel,
+      category_id: data.category_id ? Number(data.category_id) : existing.category_id,
+      order: data.order ?? existing.order,
+      units: data.units ? Number(data.units) : existing.units,
     };
 
     if (imageName) {

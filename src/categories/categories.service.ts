@@ -26,4 +26,27 @@ export class CategoriesService {
       },
     })
   }
+
+  findCategories() {
+    return this.prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    })
+  }
+  
+  async updateCategory(id: number, name: string) {
+
+    const updateCategory = await this.prisma.category.update({
+      where : {
+        id : id
+      },
+      data: {
+        name : name
+      }
+    })
+
+    return updateCategory;
+  }
 }

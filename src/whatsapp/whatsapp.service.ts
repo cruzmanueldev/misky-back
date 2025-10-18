@@ -19,11 +19,11 @@ export class WhatsappService {
         text: { body: message },
       };
 
-      const response = await firstValueFrom(
-        this.http.post(url, body, {
-          headers: { Authorization: `${token}` },
-        }),
-      );
+      // const response = await firstValueFrom(
+      //   this.http.post(url, body, {
+      //     headers: { Authorization: `${token}` },
+      //   }),
+      // );
       return 'ok';
     }catch(error){
       console.log('error: ', error)

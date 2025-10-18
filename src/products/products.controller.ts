@@ -4,11 +4,13 @@ import { Controller, Get, Query, Patch,
   UploadedFile,
   UseInterceptors,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ProductsService } from './products.service';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -29,16 +31,19 @@ export class ProductsController {
     return this.productsService.findPromotionProduct();
   }
 
+  @UseGuards(AuthGuard)
   @Patch('top')
   updateTopProducts(@Body('ids') ids: number[]) {
     return this.productsService.updateTopProducts(ids);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('promotion/:id')
   updateProductPromotion(@Param('id') id: string) {
     return this.productsService.updateProductPromotion(Number(id));
   }
 
+  @UseGuards(AuthGuard)
   @Post('detail/:id')
   updateDetailProduct(
     @Param('id') id: string,
@@ -52,6 +57,7 @@ export class ProductsController {
     return this.productsService.findTopSellingProducts();
   }
 
+  @UseGuards(AuthGuard)
   @Patch('top-selling')
   updateTopSellingProducts(@Body('ids') ids: number[]) {
     return this.productsService.updateTopSellingProducts(ids);
@@ -67,6 +73,7 @@ export class ProductsController {
     return this.productsService.findProduct(Number(id));
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
@@ -84,22 +91,19 @@ export class ProductsController {
     @Body() body: any,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    const tags =
-      typeof body.tags === 'string' ? JSON.parse(body.tags) : body.tags;
 
     return this.productsService.createProduct({
       ...body,
       image: file?.filename,
-      tags, // 👈 aquí pasas tu array
     });
   }
 
-
+  @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads/products', 
+        destination: './uploads/products',
         filename: (req, file, cb) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           cb(null, uniqueSuffix + extname(file.originalname));

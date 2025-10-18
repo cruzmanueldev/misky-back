@@ -31,4 +31,18 @@ export class CommentsService {
 
     return comment;
   }
+
+  async all() {
+
+    const data = await this.prisma.comment.findMany({
+      select : {
+        name: true,
+        email: true,
+        message: true,
+        created_at: true
+      }
+    });
+
+    return data;
+  }
 }
