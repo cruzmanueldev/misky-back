@@ -8,6 +8,11 @@ export class ProductsService {
 
   findAll() {
     return this.prisma.category.findMany({
+      where: {
+        product: {
+          some: { state: true } 
+        }
+      },
       select: {
         id: true,
         name: true,
@@ -67,7 +72,8 @@ export class ProductsService {
       where : {
         id: {
           in : [ 7 , 15, 35, 9, 41, 2,  21, 8]
-        }
+        },
+        state : true,
       },
       take: 8,
       select: {
@@ -92,7 +98,8 @@ export class ProductsService {
   findPromotionProduct() {
     return this.prisma.product.findFirst({
       where: {
-        active_promotion: true
+        active_promotion: true,
+        state: true,
       },
       select: {
         id: true,
@@ -188,7 +195,8 @@ export class ProductsService {
       where : {
         id: {
           in : [ 7 , 15, 35, 9, 41, 2,  21, 8]
-        }
+        },
+        state : true,
       },
       // take: 8,
       select: {
@@ -213,7 +221,10 @@ export class ProductsService {
   findByCategory(category_id: number) {
     return this.prisma.category.findMany({
       where: {
-        id: Number(category_id)
+        id: Number(category_id),
+        product: {
+          some: { state: true } 
+        }
       },
       select: {
         id: true,
@@ -296,5 +307,19 @@ export class ProductsService {
       where: { id },
       data: updateData,
     });
+  }
+
+  async deleteProduct(id: Number) {
+
+    const product = await this.prisma.product.update({
+      where : {
+        id: Number(id),
+      },
+      data : {
+        state : false,
+      }
+    });
+    
+    return product;
   }
 }

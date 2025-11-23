@@ -80,6 +80,7 @@ model product {
   description_carrousel String?       @db.Text
   order                 Int?
   units                 Int?
+  state                 Boolean       @default(true)
   show_in_carrousel     Boolean       @default(false)
   best_seller           Boolean       @default(false)
   active_promotion      Boolean       @default(false)

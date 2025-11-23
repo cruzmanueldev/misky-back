@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Patch,
+import { Controller, Get, Query, Patch, Delete,
   Param,
   Body,
   UploadedFile,
@@ -42,6 +42,13 @@ export class ProductsController {
   updateProductPromotion(@Param('id') id: string) {
     return this.productsService.updateProductPromotion(Number(id));
   }
+
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  deleteProduct(@Param('id') id: string) {
+    return this.productsService.deleteProduct(Number(id));
+  }
+
 
   @UseGuards(AuthGuard)
   @Post('detail/:id')
