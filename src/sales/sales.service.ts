@@ -78,7 +78,7 @@ export class SalesService {
       }
     }
 
-    message += `\nTotal: ${amount_final}€`;
+    message += `\nTotal: ${amount_final.toFixed(2)}€`;
     console.log(message);
 
     await this.twilioService.sendWhatsAppMessage(message);
@@ -87,5 +87,42 @@ export class SalesService {
       status: 200,
       message: 'Orden generada',
     };
+  }
+
+  async lastSales() {
+
+    const sales = await this.prisma.sale.findMany({
+      select : {
+        user :{ 
+          select : {
+            name: true,
+          }
+        },
+        detail_sale:{
+          select:{
+            product:{
+              select:{
+                name:true
+              }
+            }
+          }
+        },
+        created_at: true,
+        amount: true,
+      },
+      orderBy: {
+        id: 'desc'
+      },
+      take: 5
+    });
+
+    const response = sales.map(sale => ({
+      nombre: sale.user?.name ?? null,
+      productos: sale.detail_sale.map(d => d.product.name),
+      precio: `${sale.amount}€`, 
+      fecha: new Date(sale.created_at).toLocaleDateString('es-ES')
+    }));
+
+    return response;
   }
 }
