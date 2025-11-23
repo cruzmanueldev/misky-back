@@ -8,16 +8,12 @@ export class ProductsService {
 
   findAll() {
     return this.prisma.category.findMany({
-      where: {
-        product: {
-          some: { state: true } 
-        }
-      },
       select: {
         id: true,
         name: true,
         order: true,
         product: {
+          where: { state: true },
           select: {
             id: true,
             name: true,
@@ -222,15 +218,13 @@ export class ProductsService {
     return this.prisma.category.findMany({
       where: {
         id: Number(category_id),
-        product: {
-          some: { state: true } 
-        }
       },
       select: {
         id: true,
         name: true,
         order: true,
         product: {
+          where: { state: true },
           select: {
             id: true,
             name: true,
