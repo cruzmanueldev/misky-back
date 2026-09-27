@@ -75,6 +75,7 @@ model product {
   name                  String
   price                 Decimal       @db.Decimal(10, 2)
   image                 String?       @db.VarChar(255)
+  image_banner          String?       @db.VarChar(255)
   detail                String?       @db.VarChar(255)
   description           String?
   description_carrousel String?       @db.Text
@@ -95,6 +96,13 @@ model product {
   @@index([category_id], map: "Product_category_id_fkey")
 }
 
+// model users_admin {
+//   id           Int      @id @default(autoincrement())
+//   email        String   @unique
+//   password_hash String
+//   created_at    DateTime @default(now())
+// }
+
 model sale {
   id           Int            @id @default(autoincrement())
   user_id      Int?
@@ -102,7 +110,7 @@ model sale {
   amount       Decimal        @db.Decimal(10, 2)
   amount_final Decimal        @db.Decimal(10, 2)
   created_at   DateTime       @default(now())
-  updated_at   DateTime
+  updated_at   DateTime       @default(now())
   calification calification[]
   discount     discount?      @relation(fields: [discount_id], references: [id], map: "Sale_discount_id_fkey")
   user         user?          @relation(fields: [user_id], references: [id], map: "Sale_user_id_fkey")
@@ -128,6 +136,8 @@ model statesale {
   sale_id    Int
   created_at DateTime @default(now())
   updated_at DateTime
+  // delivered_at   DateTime? @map("delivered_at")
+  // delivery_address  String?   @map("delivery_address")
   sale       sale     @relation(fields: [sale_id], references: [id], map: "StateSale_sale_id_fkey")
   state      state    @relation(fields: [state_id], references: [id], map: "StateSale_state_id_fkey")
 
@@ -160,3 +170,39 @@ model detail_sale {
   sale    sale    @relation(fields: [sale_id], references: [id])
   product product @relation(fields: [product_id], references: [id])
 }
+
+// model client {
+//   id         Int      @id @default(autoincrement())
+//   name       String
+//   phone      String   @unique
+//   created_at DateTime @default(now())
+//   updated_at DateTime?
+
+//   @@map("clients")
+// }
+
+// model delivery {
+//   id         Int      @id @default(autoincrement())
+//   name       String
+//   created_at DateTime @default(now())
+//   updated_at DateTime?
+
+//   @@map("deliveries")
+// }
+
+// model address {
+//   id         Int      @id @default(autoincrement())
+//   name       String
+//   created_at DateTime @default(now())
+//   updated_at DateTime?
+
+//   @@map("addresses")
+// }
+
+// model Station {
+//   id         Int      @id @default(autoincrement())
+//   name       String
+//   created_at DateTime @default(now())
+
+//   @@map("stations")
+// }

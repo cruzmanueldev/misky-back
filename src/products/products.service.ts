@@ -6,6 +6,28 @@ export class ProductsService {
 
   constructor(private prisma: PrismaService) {}
 
+  findAllProducts(search?: string) {
+    return this.prisma.product.findMany({
+      where: {
+        state: true,
+        ...(search && {
+          name: {
+            contains: search,
+          },
+        }),
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        units: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    })
+  }
+
   findAll() {
     return this.prisma.category.findMany({
       select: {
@@ -62,15 +84,15 @@ export class ProductsService {
 
   findTopProducts() {
     return this.prisma.product.findMany({
-      // where: {
-      //   show_in_carrousel: true
-      // },
-      where : {
-        id: {
-          in : [ 7 , 15, 35, 9, 41, 2,  21, 8]
-        },
-        state : true,
+      where: {
+        show_in_carrousel: true
       },
+      // where : {
+      //   id: {
+      //     in : [ 7 , 15, 35, 9, 41, 2,  21, 8]
+      //   },
+      //   state : true,
+      // },
       take: 8,
       select: {
         id: true,
@@ -80,6 +102,7 @@ export class ProductsService {
           detail:true,
           order: true,
           image: true,
+          image_banner: true,
           units: true,
           category_id: true,
           detailpack : {
@@ -139,15 +162,15 @@ export class ProductsService {
       },
     });
 
-    const detail_product = details.map((detail: string) => ({ 
-      name: detail, 
-      product_id: Number(id),
-      updated_at: new Date() 
-    }));
+    // const detail_product = details.map((detail: string) => ({ 
+    //   name: detail, 
+    //   product_id: Number(id),
+    //   updated_at: new Date() 
+    // }));
     
-    const detail = await this.prisma.detailpack.createMany({
-      data : detail_product
-    })
+    // const detail = await this.prisma.detailpack.createMany({
+    //   data : detail_product
+    // })
 
     return 'Lista de producto actualizada';
   }
@@ -282,6 +305,9 @@ export class ProductsService {
     const existing = await this.prisma.product.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException('Producto no encontrado');
 
+    console.log('data.show_in_carrousel');
+    console.log(data.show_in_carrousel);
+    
     const updateData: any = {
       name: data.name ?? existing.name,
       price: data.price ? Number(data.price) : existing.price,
@@ -296,6 +322,23 @@ export class ProductsService {
     if (imageName) {
       updateData.image = `/uploads/products/${imageName}`;
     }
+    if (data.show_in_carrousel) {
+      updateData.show_in_carrousel = data.show_in_carrousel == "1" ? true : false;
+    }
+
+    return this.prisma.product.update({
+      where: { id },
+      data: updateData,
+    });
+  }
+
+  async updateProductBanner(id: number, imageName?: string) {
+    const existing = await this.prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Producto no encontrado');
+
+    const updateData: any = {
+      image_banner: `/uploads/products/${imageName}`
+    };
 
     return this.prisma.product.update({
       where: { id },

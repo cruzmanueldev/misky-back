@@ -20,6 +20,11 @@ export class ProductsController {
   findAll() {
     return this.productsService.findAll();
   }
+
+  @Get('/all')
+  findAllProducts(@Query('search') search?: string) {
+    return this.productsService.findAllProducts(search);
+  }
   
   @Get('top')
   findTopProducts() {
@@ -126,6 +131,29 @@ export class ProductsController {
     return this.productsService.updateProduct(
       Number(id),
       body,
+      file?.filename,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('image-banner/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/products',
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+    }),
+  )
+  async updateProductBanner(
+    @Param('id') id: string,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.productsService.updateProductBanner(
+      Number(id),
       file?.filename,
     );
   }
