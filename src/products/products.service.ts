@@ -214,7 +214,7 @@ export class ProductsService {
       where : {
         // category_id: 12,
         id: {
-          in : [ 7 , 15, 35, 9, 41, 2,  21, 8 , 59, 127, 128]
+          in : [  59, 127, 128, 7 , 15, 35, 9, 41, 2,  21, 8]
         },
         state : true,
       },
