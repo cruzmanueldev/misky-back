@@ -212,10 +212,10 @@ export class ProductsService {
   findTopSellingProducts() {
     return this.prisma.product.findMany({
       where : {
-        category_id: 12,
-        // id: {
-        //   in : [ 7 , 15, 35, 9, 41, 2,  21, 8]
-        // },
+        // category_id: 12,
+        id: {
+          in : [ 7 , 15, 35, 9, 41, 2,  21, 8 , 59, 127, 128]
+        },
         state : true,
       },
       // take: 8,
